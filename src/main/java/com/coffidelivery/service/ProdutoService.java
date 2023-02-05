@@ -23,6 +23,23 @@ public class ProdutoService {
 
     }
 
+    public ProdutoDTO update(Integer id, ProdutoCreateDTO produtoCreateDTO) throws RegraDeNegocioException {
+        ProdutoEntity produto = findById(id);
+        produto.setDescricao(produtoCreateDTO.getDescricao());
+        produto.setNome(produtoCreateDTO.getNome());
+        produto.setTipo(produtoCreateDTO.getTipo());
+        produto.setPreco(produtoCreateDTO.getPreco());
+
+        produtoRepository.save(produto);
+        return objectMapper.convertValue(produto, ProdutoDTO.class);
+    }
+
+
+    public void delete(Integer id) throws RegraDeNegocioException {
+        ProdutoEntity produto = findById(id);
+        produtoRepository.delete(produto);
+    }
+
     public ProdutoEntity findById(Integer id) throws RegraDeNegocioException {
         return produtoRepository.findById(id)
                 .orElseThrow(() ->

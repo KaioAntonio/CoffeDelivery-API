@@ -1,5 +1,6 @@
 package com.coffidelivery.controller;
 
+import com.coffidelivery.controller.interfaces.ProdutoControllerInterface;
 import com.coffidelivery.dto.produto.FileDTO;
 import com.coffidelivery.dto.produto.ProdutoCreateDTO;
 import com.coffidelivery.dto.produto.ProdutoDTO;
@@ -25,42 +26,38 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/produto")
-public class ProdutoController {
+public class ProdutoController implements ProdutoControllerInterface {
 
     private final ProdutoService produtoService;
     private final FileService fileService;
 
-    @Operation(summary = "Salvar produto", description = "Salvar produto")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Salvar produto no banco"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @PostMapping()
+    @Override
     public ResponseEntity<ProdutoDTO> create(@Valid @RequestBody ProdutoCreateDTO produtoCreateDTO){
         return new ResponseEntity<>(produtoService.create(produtoCreateDTO), HttpStatus.OK);
 
     }
 
-    @Operation(summary = "Salvar imagem do produto", description = "Salvar imagem do produto por id")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Salvar imagem do produto por id do banco"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @PostMapping("/upload-imagem/")
+    @Override
     public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file,
-                                              @RequestParam("idProduto") String id) throws RegraDeNegocioException, IOException {
+                                              @RequestParam("idProduto") String id) throws RegraDeNegocioException {
         return new ResponseEntity<>(fileService.store(file, id), HttpStatus.OK);
     }
 
-    @GetMapping("imagem/")
+    @Override
     public ResponseEntity<String> recuperarImagem(@RequestParam("id") String id) throws RegraDeNegocioException {
         return new ResponseEntity<>(fileService.getImage(id), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProdutoDTO> update(@RequestParam("id") Integer id,
+            @RequestBody @Valid ProdutoCreateDTO produtoCreateDTO) throws RegraDeNegocioException {
+        return new ResponseEntity<>(produtoService.update(id, produtoCreateDTO), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@RequestParam("id") Integer id) throws RegraDeNegocioException {
+        produtoService.delete(id);
+        return ResponseEntity.ok().build();
     }
 
 }

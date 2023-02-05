@@ -1,5 +1,6 @@
 package com.coffidelivery.controller;
 
+import com.coffidelivery.controller.interfaces.UsuarioControllerInterface;
 import com.coffidelivery.dto.usuario.UsuarioDTO;
 import com.coffidelivery.exceptions.RegraDeNegocioException;
 import com.coffidelivery.service.UsuarioService;
@@ -21,19 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/user")
-public class UsuarioController {
+public class UsuarioController implements UsuarioControllerInterface {
 
     private final UsuarioService usuarioService;
 
-    @Operation(summary = "Buscar usuário por id", description = "Buscar usuário por id")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Buscar usuário por id do banco"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @GetMapping("/findById/{id}")
+    @Override
     public ResponseEntity<UsuarioDTO> findById(@PathVariable("id") Integer id) throws RegraDeNegocioException {
         return new ResponseEntity<>(usuarioService.findById(id), HttpStatus.OK);
     }

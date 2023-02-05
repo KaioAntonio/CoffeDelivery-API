@@ -1,5 +1,6 @@
 package com.coffidelivery.controller;
 
+import com.coffidelivery.controller.interfaces.AuthControllerInterface;
 import com.coffidelivery.dto.login.LoginDTO;
 import com.coffidelivery.dto.usuario.UsuarioCreateDTO;
 import com.coffidelivery.dto.usuario.UsuarioDTO;
@@ -7,9 +8,6 @@ import com.coffidelivery.entity.UsuarioEntity;
 import com.coffidelivery.exceptions.RegraDeNegocioException;
 import com.coffidelivery.security.TokenService;
 import com.coffidelivery.service.UsuarioService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +15,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -25,22 +25,14 @@ import javax.validation.Valid;
 @RequestMapping("/auth")
 @Validated
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthControllerInterface {
 
     private final UsuarioService usuarioService;
     private final TokenService tokenService;
 
     private final AuthenticationManager authenticationManager;
 
-    @Operation(summary = "Efetuar o login do usuário", description = "Efetua o login do usuário")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Efetua o login do usuário do banco"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @PostMapping
+    @Override
     public ResponseEntity<String> auth(@RequestBody @Valid LoginDTO loginDTO) throws RegraDeNegocioException {
         try {
             UsernamePasswordAuthenticationToken userAuthDTO = new UsernamePasswordAuthenticationToken(loginDTO.getLogin(),
@@ -56,20 +48,12 @@ public class AuthController {
 
     }
 
-    @PostMapping("/criar")
+    @Override
     public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuarioCreateDTO){
         return new ResponseEntity<>(usuarioService.create(usuarioCreateDTO), HttpStatus.OK);
     }
 
-    @Operation(summary = "Buscar usuário logado", description = "Buscar usuário logado")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Buscar usuário logado do banco"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @GetMapping("/logged")
+    @Override
     public ResponseEntity<UsuarioDTO> pegarUsuarioLogado() throws RegraDeNegocioException {
         return new ResponseEntity<>(usuarioService.getLoggedUser(), HttpStatus.OK);
     }

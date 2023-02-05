@@ -12,8 +12,6 @@ import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 import static java.lang.Integer.parseInt;
 
 @Service

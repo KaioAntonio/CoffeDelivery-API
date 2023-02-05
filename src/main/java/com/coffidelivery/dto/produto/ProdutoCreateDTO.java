@@ -1,6 +1,5 @@
 package com.coffidelivery.dto.produto;
 
-import com.coffidelivery.entity.FileEntity;
 import lombok.Data;
 
 @Data
