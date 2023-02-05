@@ -48,13 +48,13 @@ public class ProdutoController implements ProdutoControllerInterface {
         return new ResponseEntity<>(fileService.getImage(id), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @Override
     public ResponseEntity<ProdutoDTO> update(@RequestParam("id") Integer id,
             @RequestBody @Valid ProdutoCreateDTO produtoCreateDTO) throws RegraDeNegocioException {
         return new ResponseEntity<>(produtoService.update(id, produtoCreateDTO), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @Override
     public ResponseEntity<Void> delete(@RequestParam("id") Integer id) throws RegraDeNegocioException {
         produtoService.delete(id);
         return ResponseEntity.ok().build();
