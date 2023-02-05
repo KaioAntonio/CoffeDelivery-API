@@ -1,6 +1,7 @@
 package com.coffidelivery.controller;
 
 import com.coffidelivery.dto.login.LoginDTO;
+import com.coffidelivery.dto.usuario.UsuarioCreateDTO;
 import com.coffidelivery.dto.usuario.UsuarioDTO;
 import com.coffidelivery.entity.UsuarioEntity;
 import com.coffidelivery.exceptions.RegraDeNegocioException;
@@ -53,6 +54,11 @@ public class AuthController {
             throw new RegraDeNegocioException("Erro ao realizar o login!");
         }
 
+    }
+
+    @PostMapping("/criar")
+    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuarioCreateDTO){
+        return new ResponseEntity<>(usuarioService.create(usuarioCreateDTO), HttpStatus.OK);
     }
 
     @Operation(summary = "Buscar usuário logado", description = "Buscar usuário logado")
